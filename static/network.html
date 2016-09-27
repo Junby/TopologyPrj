@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
+<script src="/TopologyPrj/js/d3.js"></script>
+<body>
+
+<svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+    <g>
+        <image xlink:href="https://console.ustack.com/static/modules/instance/i/icon-public-network.png" height="74.75" width="126.24999" y="19.25" x="253.50001"/>
+        <rect ry="10" rx="10" fill="transparent" x="336.25" y="136.25" width="82.5" height="42.75" stroke="#000000" id="svg_1"/>
+        <rect ry="10" rx="10" fill="transparent" x="213.5" y="135.75" width="82.5" height="42.75" stroke="#000000" id="svg_2"/>
+        <path fill="none" d="m346.78476,78.46902l0,72.52598" stroke-width="2" transform="rotate(-55.27535629272461 346.7847595214845,114.73200988769533) " stroke="rgb(142,218,208)"/>
+        <path fill="none" d="m288.55307,79.50677l0,71.12231" stroke-width="2" transform="rotate(52.00126266479492 288.5530700683594,115.06791687011719) "  stroke="rgb(142,218,208)"/>
+        <text stroke="rgb(142,218,208)" transform="matrix(0.6182032945968565,0,0,0.6011035749454265,106.94917472933706,65.95223680166359) " xml:space="preserve" text-anchor="middle" font-family="serif" font-size="24" y="161.98164" x="237.05927" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#000000">VLAN1</text>
+        <text stroke="rgb(142,218,208)" transform="matrix(0.6182032945968565,0,0,0.6011035749454265,106.94917472933706,65.95223680166359) " xml:space="preserve" text-anchor="middle" font-family="serif" font-size="24" y="163.828" x="438.44773" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#000000">VLAN2</text>
+        <rect id="svg_3" ry="10" rx="10" fill="transparent" x="474.75" y="136.125" width="82.5" height="42.75" stroke="#000000"/>
+        <text stroke="rgb(142,218,208)" transform="matrix(0.6182032945968565,0,0,0.6011035749454265,106.94917472933706,65.95223680166359) " xml:space="preserve" text-anchor="middle" font-family="serif" font-size="24" y="162.16702" x="663.2977" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#000000">VLAN3</text>
+        <rect id="svg_4" ry="2" rx="2" fill="transparent" x="336.75" y="257.125" width="82.5" height="42.75" stroke="#000000"/>
+        <text stroke="rgb(142,218,208)" transform="matrix(1.1752343624907997,0,0,0.9718000247449545,-137.67931019896815,-63.38998536987154) " xml:space="preserve" text-anchor="middle" font-family="serif" font-size="24" y="357.44007" x="439.21281" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#000000">vm</text>
+        <path fill="none" d="m375.00003,179.237l0,77.52597" stroke-width="2" transform="rotate(-0.00006358288374030963 375.00003059461494,217.9999847193066) " stroke="rgb(142,218,208)"/>
+        <path fill="none" d="m315.81033,146.95197l0,139.91879" stroke-width="2" transform="rotate(-57.206504821777344 315.8103332519531,216.9113616943359) " stroke="rgb(142,218,208)"/>
+        <path fill="none" d="m445.60983,137.71739l0,158.55305" stroke-width="2" transform="rotate(61.73646926879883 445.6098327636719,216.99392700195312) " stroke="rgb(142,218,208)"/>
+        <ellipse id="svg_5" fill="transparent" stroke-width="null" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" cx="310.5" cy="354" rx="50.5" ry="22" stroke="#000000"/>
+        <ellipse id="svg_6" fill="transparent" stroke-width="null" stroke-dasharray="null" stroke-linejoin="null" stroke-linecap="null" cx="447" cy="352.5" rx="50.5" ry="22" stroke="#000000"/>
+        <text stroke="rgb(142,218,208)" transform="matrix(0.6182032945968565,0,0,0.6011035749454265,106.94917472933706,65.95223680166359) " xml:space="preserve" text-anchor="middle" font-family="serif" font-size="24" y="489.89402" x="328.44993" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#000000">系统盘</text>
+        <text stroke="rgb(142,218,208)" transform="matrix(0.6182032945968565,0,0,0.6011035749454265,106.94917472933706,65.95223680166359) " xml:space="preserve" text-anchor="middle" font-family="serif" font-size="24" y="488.22968" x="551.68033" stroke-linecap="null" stroke-linejoin="null" stroke-dasharray="null" stroke-width="0" fill="#000000">数据盘</text>
+        <path fill="none" d="m343.55338,281.74466l0,68.80869" stroke-width="2" transform="rotate(61.73646926879883 343.55337524414057,316.1490173339844) " id="svg_21" stroke="rgb(142,218,208)"/>
+        <path fill="none" d="m405.86942,277.90033l0,72.92764" stroke-width="2" transform="rotate(114.80941009521484 405.8694152832031,314.36416625976557) " id="svg_23" stroke="rgb(142,218,208)"/>
+    </g>
+</svg>
+<div id="lable2" style="display:none;">
+    <lable>I am here!!!</lable>
+    <button type="button" onclick="alertMsg();">click me</button>
+</div>
+<script>
+    $(function(){
+        $("rect[id^='svg_']").mouseover(function(){
+            $("div[id^='lable']").css({
+                "display" : "block"
+            });
+        });
+        $("svg").mousedown(function(){
+            $("div[id^='lable']").css({
+                "display" : "none"
+            });
+        });
+    });
+
+    function alertMsg(){
+        alert("message");
+    }
+
+</script>
+</body>
+</html>
