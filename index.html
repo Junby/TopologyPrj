@@ -6,221 +6,89 @@
 </head>
 <script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
 <script src="/TopologyPrj/js/d3.js"></script>
-<style type="text/css">
-    .link { stroke: green; stroke-linejoin:bevel;}
-
-    .link_error{
-        stroke:red;
-        stroke-linejoin:bevel;
-    }
-
-    .nodetext {
-
-        font: 12px sans-serif;
-        -webkit-user-select:none;
-        -moze-user-select:none;
-        stroke-linejoin:bevel;
-
-    }
-
-    #canvas{
-        width:800px;
-        height:600px;
-        border:1px solid gray;
-        border-radius:5px;
-        position:relative;
-        margin:20px;
-    }
-</style>
 <body>
-<div id="canvas"></div>
-<!--<svg width="640" height="480" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">-->
-    <!--&lt;!&ndash; Created with SVG-edit - http://svg-edit.googlecode.com/ &ndash;&gt;-->
-    <!--<g>-->
-        <!--<line class="link" y2="225" x2="554" y1="225" x1="102" />-->
-        <!--<line class="link" y2="223" x2="376" y1="103" x1="376" />-->
-        <!--<line class="link" y2="345.5" x2="201.5" y1="225.5" x1="201.5" />-->
-        <!--<image xlink:href="http://ww2.sinaimg.cn/large/412e82dbjw1dsbny7igx2j.jpg" height="64" width="64" y="42" x="346"/>-->
-        <!--<image xlink:href="http://ww2.sinaimg.cn/large/412e82dbjw1dsbny7igx2j.jpg" height="64" width="64" y="345" x="169"/>-->
-    <!--</g>-->
-<!--</svg>-->
+
+<svg width="700" height="500" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Created with SVG-edit - http://svg-edit.googlecode.com/ -->
+    <title>Layer 1</title>
+    <g stroke="null">
+        <title>Layer 1</title>
+        <image x="300" y="20" width="150" height="75" xlink:href="https://console.ustack.com/static/modules/instance/i/icon-public-network.png" id="svg_1"/>
+        <rect height="5" width="700" y="95" x="0" fill="#59cbdb" ry="2" rx="2" id="svg_2"/>
+        <rect rx="2" ry="2" fill="transparent" x="150" y="150" width="100" height="60" id="svg_4" stroke="#d5dee2"/>
+        <image x="334.5" y="267" width="25" height="25" xlink:href="https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png" id="svg_51" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+        <text x="200" y="200" fill="#323232" text-anchor="middle" font-size="12px" font-family="&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif" id="svg_7">
+            <tspan x="196" y="197" id="svg_8" stroke="null">VLAN1</tspan>
+        </text>
+        <rect rx="2" ry="2" fill="transparent" x="300" y="150" width="100" height="60" id="svg_4" stroke="#3f3f3f"/>
+        <text x="350" y="200" fill="#323232" text-anchor="middle" font-size="12px" font-family="&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif" id="svg_7" stroke="null">
+            <tspan x="350" y="199" id="svg_8" stroke="null">VLAN2</tspan>
+        </text>
+        <rect rx="2" ry="2" fill="transparent" x="450" y="150" width="100" height="60" id="svg_4" stroke="#ff7f00"/>
+        <text x="500" y="200" fill="#323232" text-anchor="middle" font-size="12px" font-family="&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif" id="svg_7" stroke="null">
+            <tspan x="500" y="200" id="svg_8" stroke="null">VLAN3</tspan>
+        </text>
+        <path fill="none" d="m196,109l0,37" stroke-width="2" id="svg_24" stroke="rgb(142,218,208)"/>
+        <path fill="none" d="m348,108l0,37" stroke-width="2" id="svg_26" stroke="rgb(142,218,208)"/>
+        <g id="svg_3" stroke="null">
+            <rect rx="2" ry="2" fill="#fff" x="190" y="98" width="12" height="10" id="svg_5" stroke="null"/>
+            <path fill="none" d="m199,105l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" id="svg_6" stroke="#59cbdb"/>
+        </g>
+        <g id="svg_12" stroke="null">
+            <rect id="svg_13" rx="2" ry="2" fill="#fff" x="342" y="98" width="12" height="10" stroke="null"/>
+            <path id="svg_14" fill="none" d="m351,105l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" stroke="#59cbdb"/>
+        </g>
+        <g id="svg_15" transform="rotate(177.9174346923828 347.99999999999994,146.49999999999997) " stroke="null">
+            <rect id="svg_16" rx="2" ry="2" fill="#fff" x="342" y="141" width="12" height="10" stroke="null"/>
+            <path id="svg_17" fill="none" d="m351,148l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" stroke="#59cbdb"/>
+        </g>
+        <g id="svg_18" transform="rotate(177.9174346923828 196,147.5) " stroke="null">
+            <rect id="svg_19" rx="2" ry="2" fill="#fff" x="190" y="142" width="12" height="10" stroke="null"/>
+            <path id="svg_20" fill="none" d="m199,149l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" stroke="#59cbdb"/>
+        </g>
+        <rect rx="2" ry="2" fill="transparent" x="300" y="260" width="100" height="60" id="svg_27" stroke="#d5dee2"/>
+        <image x="183.5" y="159" width="25" height="25" xlink:href="https://console.ustack.com/static/modules/instance/i/icon-network.png" id="svg_51" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+        <image x="381" y="264" width="15" height="15" xlink:href="https://console.ustack.com/static/modules/instance/i/status/icon-status-stop.png" id="svg_52" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+        <text x="348" y="308" fill="#323232" text-anchor="middle" font-size="12px" font-family="&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif" id="svg_28" stroke="null">VM</text>
+        <path fill="none" d="m348,215l0,37" stroke-width="2" id="svg_30" stroke="rgb(142,218,208)"/>
+        <g transform="rotate(177.9174346923828 348,257.5) " id="svg_31" stroke="null">
+            <rect rx="2" ry="2" fill="#fff" x="342" y="252" width="12" height="10" id="svg_32" stroke="null"/>
+            <path fill="none" d="m351,259l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" id="svg_33" stroke="#59cbdb"/>
+        </g>
+        <g id="svg_34" stroke="null">
+            <rect rx="2" ry="2" fill="#fff" x="342" y="210" width="12" height="10" id="svg_35" stroke="null"/>
+            <path fill="none" d="m351,217l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" id="svg_36" stroke="#59cbdb"/>
+        </g>
+        <path fill="none" d="m193,251l0,37" stroke-width="2" id="svg_37" stroke="null"/>
+        <polyline points="196.5,211.5 196.5,288.5 297.5000009536743,288.5 " stroke-width="2" fill="none" id="svg_29" stroke="#59cbdb"/>
+        <g id="svg_38" stroke="null">
+            <rect rx="2" ry="2" fill="#fff" x="190.5" y="210" width="12" height="10" id="svg_39" stroke="null"/>
+            <path fill="none" d="m199.5,217l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" id="svg_40" stroke="#59cbdb"/>
+        </g>
+        <g id="svg_41" transform="rotate(88.21009063720703 296.99999999999994,288.50000000000006) " stroke="null">
+            <rect rx="2" ry="2" fill="#fff" x="291" y="283" width="12" height="10" id="svg_42" stroke="null"/>
+            <path fill="none" d="m300,290l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" id="svg_43" stroke="#59cbdb"/>
+        </g>
+        <polyline points="410.82611083984375,202.2135772705078 410.82611083984375,297.2135925292969 487.82611083984375,297.2135925292969 " stroke-width="2" fill="none" id="svg_44" transform="rotate(-90.25808715820312 449.3261108398437,249.7135772705078) " stroke="#59cbdb"/>
+        <g id="svg_45" stroke="null">
+            <rect rx="2" ry="2" fill="#fff" x="491" y="208" width="12" height="10" id="svg_46" stroke="null"/>
+            <path fill="none" d="m500,215l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" id="svg_47" stroke="#59cbdb"/>
+        </g>
+        <g id="svg_48" transform="rotate(-91.245361328125 403.00000000000006,288.5) " stroke="null">
+            <rect rx="2" ry="2" fill="#fff" x="397" y="283" width="12" height="10" id="svg_49" stroke="null"/>
+            <path fill="none" d="m406,290l0,-4l-6,0l0,4m3,4l0,-6" stroke-width="2" id="svg_50" stroke="#59cbdb"/>
+        </g>
+        <rect rx="2" ry="2" fill="transparent" x="196" y="379" width="100" height="60" id="svg_53" stroke="#d5dee2"/>
+        <rect rx="2" ry="2" fill="transparent" x="410" y="380" width="100" height="60" id="svg_54" stroke="#d5dee2"/>
+        <image x="335.5" y="157" width="25" height="25" xlink:href="https://console.ustack.com/static/modules/instance/i/icon-network.png" id="svg_55" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+        <image x="487.5" y="160" width="25" height="25" xlink:href="https://console.ustack.com/static/modules/instance/i/icon-network.png" id="svg_56" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+        <rect height="3" width="304.00002" y="350" x="200" fill="#59cbdb" ry="2" rx="2" id="svg_59"/>
+        <path fill="none" d="m348,320l0,33" stroke-width="2" id="svg_60" stroke="rgb(142,218,208)"/>
+        <path fill="none" d="m244,353l0,26" stroke-width="2" id="svg_61" stroke="rgb(142,218,208)"/>
+        <path fill="none" d="m462,353l0,28" stroke-width="2" id="svg_62" stroke="rgb(142,218,208)"/>
+        <text x="462" y="415" fill="#323232" text-anchor="middle" font-size="12px" font-family="&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif" id="svg_63">数据盘</text>
+        <text x="245" y="415" fill="#323232" text-anchor="middle" font-size="12px" font-family="&quot;Lucida Grande&quot;, &quot;Lucida Sans Unicode&quot;, Verdana, Arial, Helvetica, sans-serif" id="svg_65">系统盘</text>
+    </g>
+</svg>
 </body>
-<script>
-    function Topology(e){
-        typeof (e) == 'string' && (e = document.getElementById(e));
-        var w = e.clientWidth, h = e.clientHeight, self = this;
-        this.force = d3.layout.force().gravity(.05).distance(200).charge(
-                -800).size([ w, h ]);//力学图API
-        this.nodes = this.force.nodes();
-        this.links = this.force.links();
-        this.clickFn = function() {
-        };
-        this.vis = d3.select(e).append("svg:svg").attr("width", w).attr(
-                "height", h).attr("pointer-events", "all");
-        this.force.on("tick", function(x) {
-            self.vis.selectAll("g.node").attr("transform", function(d) {
-                return "translate(" + d.x + "," + d.y + ")";
-            });
-
-            self.vis.selectAll("line.link").attr("x1", function(d) {
-                return d.source.x;
-            }).attr("y1", function(d) {
-                return d.source.y;
-            }).attr("x2", function(d) {
-                return d.target.x;
-            }).attr("y2", function(d) {
-                return d.target.y;
-            });
-        });
-    }
-
-    Topology.prototype.addNode = function(node) {
-        this.nodes.push(node);
-    }
-
-    Topology.prototype.addNodes = function(nodes) {
-        if (Object.prototype.toString.call(nodes) == '[object Array]') {
-            var self = this;
-            nodes.forEach(function(node) {
-                self.addNode(node);
-            });
-        }
-    }
-
-    //增加连线
-    Topology.prototype.addLink = function(source, target) {
-        this.links.push({
-            source : this.findNode(source),
-            target : this.findNode(target)
-        });
-    }
-
-    //增加多个连线
-    Topology.prototype.addLinks = function(links) {
-        if (Object.prototype.toString.call(links) == '[object Array]') {
-            var self = this;
-            links.forEach(function(link) {
-                self.addLink(link['source'], link['target']);
-            });
-        }
-    }
-
-    //查找节点
-    Topology.prototype.findNode = function(id) {
-        var nodes = this.nodes;
-        for ( var i in nodes) {
-            if (nodes[i]['id'] == id)
-                return nodes[i];
-        }
-        return null;
-    }
-
-    Topology.prototype.update = function() {
-        var link = this.vis.selectAll("line.link").data(this.links,
-                function(d) {
-                    return d.source.id + "-" + d.target.id;
-                })
-                .attr(
-                "class",
-                function(d) {
-                    return d['source']['status']
-                    && d['target']['status'] ? 'link'
-                            : 'link link_error';
-                });
-
-        link.enter().insert("svg:line", "g.node")
-                .attr(
-                "class",
-                function(d) {
-                    return d['source']['status']
-                    && d['target']['status'] ? 'link'
-                            : 'link link_error';
-                });
-
-        link.exit().remove();
-
-        var node = this.vis.selectAll("g.node").data(this.nodes,
-                function(d) {
-                    return d.id;
-                });
-
-        var nodeEnter = node.enter().append("svg:g").attr("class", "node");
-
-        //增加图片，可以根据需要来修改
-        var self = this;
-        nodeEnter
-                .append("svg:image")
-                .attr("class", "circle")
-                .attr(
-                "xlink:href",
-                function(d) {
-                    //根据类型来使用图片
-                    return d.expand ? "http://ww2.sinaimg.cn/large/412e82dbjw1dsbny7igx2j.jpg"
-                            : "http://ww4.sinaimg.cn/large/412e82dbjw1dsbnxezrrpj.jpg";
-                }).attr("x", "-32px").attr("y", "-32px").attr(
-                "width", "64px").attr("height", "64px").on('click',
-                function(d) {
-                    d.expand && self.clickFn(d);
-                })
-
-        nodeEnter.append("svg:text").attr("class", "nodetext").attr("dx",
-                15).attr("dy", -35).text(function(d) {
-                    return d.id
-                });
-
-        node.exit().remove();
-
-        this.force.start();
-    }
-</script>
-<script>
-    $(function(){
-        var topology = new Topology("canvas");
-
-        var links = [ {
-            source : '10.4.42.1',
-            target : '10.4.43.1'
-        }, {
-            source : '10.4.42.1',
-            target : '10.4.44.1'
-        }, {
-            source : '10.4.42.1',
-            target : '10.4.45.1'
-        } ];
-
-        var childLinks = [ {
-            source : '10.4.43.1',
-            target : '10.4.43.2'
-        }, {
-            source : '10.4.43.1',
-            target : '10.4.43.3'
-        }, {
-            source : '10.4.43.2',
-            target : '10.4.43.3'
-        }];
-
-        var nodes = [ {
-            id : '10.4.42.1',
-            type : 'router',
-            status : 1
-        }, {
-            id : '10.4.43.1',
-            type : 'switch',
-            status : 1,
-            expand : true
-        }, {
-            id : '10.4.44.1',
-            type : 'switch',
-            status : 1
-        }, {
-            id : '10.4.45.1',
-            type : 'switch',
-            status : 0
-        }];
-
-        topology.addNodes(nodes);
-        topology.addLinks(links);
-        topology.update();
-    });
-</script>
 </html>
