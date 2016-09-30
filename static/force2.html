@@ -22,6 +22,7 @@
         var t = new Topology(700,500);
         t.addTopRect();
         t.addTopNode();
+        t.addNetworkNode();
     });
 
     /**
@@ -47,11 +48,11 @@
             padding = this.height / 5;
         }
         this.topPadding = padding;
-        this.createRect(0,padding,trWidth,trHeight,"#59cbdb");
+        this.createTopRect(0,padding,trWidth,trHeight,"#59cbdb");
     }
 
-    Topology.prototype.createImage = function (x,y,width,height,link){
-        this.svg.append("image").attr("x",x).attr("y",y).attr("width",width).attr("height",height).attr("xlink:href",link);
+    Topology.prototype.createTopRect = function(x,y,width,height,color){
+        this.svg.append("rect").attr("x",x).attr("y",y).attr("width",width).attr("height",height).attr("fill",color);
     }
 
     /**
@@ -75,8 +76,40 @@
         this.createImage(x,y,tnWidth,tnHeight,tnLink);
     }
 
-    Topology.prototype.createRect = function(x,y,width,height,color){
-        this.svg.append("rect").attr("x",x).attr("y",y).attr("width",width).attr("height",height).attr("fill",color);
+    Topology.prototype.createImage = function (x,y,width,height,link){
+        this.svg.append("image").attr("x",x).attr("y",y).attr("width",width).attr("height",height).attr("xlink:href",link);
+    }
+
+    Topology.prototype.addNetworkNode = function(width,height,link,num){
+        if(width == null || width == ""){
+            width = this.width / 6;
+        }
+        if(height == null || height == ""){
+            height = width / 2;
+        }
+        if(link == null || link == ""){
+            link = "https://console.ustack.com/static/modules/instance/i/icon-network.png";
+        }
+
+//        if(num == null || num == ""){
+//            alert("xxxxx");
+//            return;
+//        }
+
+        var x = this.width / 2 - width / 2;
+        var y = this.topPadding + 50;
+        this.createNetworkRect(x,y,width,height,"transparent");
+    }
+
+
+
+    Topology.prototype.createNetworkRect = function(x,y,width,height,color){
+        this.svg.append("rect").attr("x",x).attr("y",y).attr("width",width).attr("height",height).attr("fill",color)
+                .attr("rx",2).attr("ry",2).attr("stroke","#d5dee2");
+    }
+
+    Topology.prototype.addLink = function(){
+
     }
 
 </script>
