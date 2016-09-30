@@ -52,19 +52,19 @@
         linkNode(s2, g1, true);
         linkNode(s3, g1, true);
 
-        var w1 = node(324, 167, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
+        var w1 = node(366, 167, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
         linkNode(g1, w1);
 
-        var c1 = node(364, 214, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
+        var c1 = node(366, 214, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
         linkNode(w1, c1);
 
-        var cloud = node(344, 259, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
+        var cloud = node(366, 259, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
         linkNode(c1, cloud);
 
-        var c2 = node(364, 328, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
+        var c2 = node(366, 328, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
         linkNode(cloud, c2);
 
-        var w2 = node(324, 377, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
+        var w2 = node(366, 377, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
         linkNode(c2, w2);
 
         var g2 = node(366, 411, 'https://console.ustack.com/static/modules/instance/i/icon-network.png');
@@ -100,6 +100,9 @@
             }
         }, 600);
 
+
+//        stage.frames = "0";
+//        stage.paint(setInterval());
         stage.add(scene);
     });
 
