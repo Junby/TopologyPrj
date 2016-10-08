@@ -61,7 +61,7 @@
             var link = new JTopo.FlexionalLink(nodeA, nodeZ, text);
             link.direction = direction || 'horizontal';
             link.arrowsRadius = 10;
-            link.lineWidth = 3; // 线宽
+            link.lineWidth = 2; // 线宽
             link.offsetGap = 25;
             link.bundleGap = 15; // 线条之间的间隔
             link.textOffsetY = 10; // 文本偏移量（向下15个像素）
@@ -72,13 +72,6 @@
             return link;
         }
 
-        // 曲线
-        function newCurveLink(nodeA, nodeZ, text){
-            var link = new JTopo.CurveLink(nodeA, nodeZ, text);
-            link.lineWidth = 3; // 线宽
-            scene.add(link);
-            return link;
-        }
 
         var net1 = node(230, 50, 'https://console.ustack.com/static/modules/instance/i/icon-network.png', 'net1');
         var net2 = node(360, 50, 'https://console.ustack.com/static/modules/instance/i/icon-network.png', 'net2');
