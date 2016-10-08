@@ -23,335 +23,152 @@
 
     }
 
-    #container{
-        width:800px;
-        height:600px;
+    .container{
+        width:500px;
+        height:500px;
         border:1px solid gray;
         border-radius:5px;
         position:relative;
         margin:20px;
     }
+
+    .linetext {
+        font-size: 12px ;
+        font-family: SimSun;
+        fill:red;
+        fill-opacity:0.0;
+    }
 </style>
 <body>
-<div id='container'></div>
 <script>
-        //d3.js 力学图
-        function Topology(ele) {
-            console.info(1);
-            typeof (ele) == 'string' && (ele = document.getElementById(ele));
-            //clientWidth:对象宽度 clientHeight:对象高度
-            var w = ele.clientWidth, h = ele.clientHeight, self = this;
-            console.info(ele);
-            console.info(w);
-            console.info(h);
-            console.info("before")
-            console.info(self);
-            this.force = d3.layout.force().gravity(.05).distance(200).charge(
-                    -800).size([ w, h ]);//力学图API
-            this.nodes = this.force.nodes();
-            this.links = this.force.links();
-            this.clickFn = function() {
-            };
-            this.vis = d3.select(ele).append("svg:svg").attr("width", w).attr(
-                    "height", h).attr("pointer-events", "all");//pointer-events css3的新特性 控制鼠标的监听事件target
 
-            this.force.on("tick", function(x) {//transform css3新特性 translate定义2D转换
-                self.vis.selectAll("g.node").attr("transform", function(d) {
-                    return "translate(" + d.x + "," + d.y + ")";
-                });
 
-                self.vis.selectAll("line.link").attr("x1", function(d) {
-                    return d.source.x;
-                }).attr("y1", function(d) {
-                    return d.source.y;
-                }).attr("x2", function(d) {
-                    return d.target.x;
-                }).attr("y2", function(d) {
-                    return d.target.y;
-                });
-            });
-            console.info("after");
-            console.info(self);
-        }
+    var nodes = [
+        { name: "network",image: "https://console.ustack.com/static/modules/instance/i/icon-network.png"},
+        { name: "vm1",image: "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png"},
+        { name: "vm2" ,image: "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png"},
+        { name: "vm3" ,image: "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png"},
+        { name: "data1",image: "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_windows.png"},
+        { name: "root1",image: "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_windows.png"}];
 
-        Topology.prototype.doZoom = function() {
-            console.info(2);
-            d3.select(this).select('g').attr(
-                    "transform",
-                    "translate(" + d3.event.translate + ")" + " scale("
-                    + d3.event.scale + ")");
+    var edges = [
+        { source : 0  , target: 1 , relation:"VM" } ,
+        { source : 0  , target: 2 , relation:"VM"  } ,
+        { source : 0  , target: 3 , relation:"VM"  } ,
+        { source : 1  , target: 4 , relation:"volume" } ,
+        { source : 1  , target: 5 , relation:"volume" } ];
 
-        }
+    var width = 400;
+    var height = 400;
+    var img_w = 77;
+    var img_h = 90;
 
-        //增加节点
-        Topology.prototype.addNode = function(node) {
-            console.info(3);
-            this.nodes.push(node);
-        }
 
-        Topology.prototype.addNodes = function(nodes) {
-            console.info(4);
-            //Object.prototype.toString.call() 进行类型判断返回 [object class]的样式
-            if (Object.prototype.toString.call(nodes) == '[object Array]') {
-                var self = this;
-                console.info(self.nodes);
-                nodes.forEach(function(node) {
-                    self.addNode(node);
-                });
-                console.info(self.nodes);
+    var svg = d3.select("body")
+            .append("svg").attr("class","container");
 
-            }
-        }
+    var force = d3.layout.force()
+            .nodes(nodes)		//指定节点数组
+            .links(edges)		//指定连线数组
+            .size([width,height])	//指定范围
+            .linkDistance(200)	//指定连线长度
+            .charge(-800);	//相互之间的作用力
 
-        //增加连线
-        Topology.prototype.addLink = function(source, target) {
-            console.info(5);
-            console.info(source + "," + target);
-            this.links.push({
-                source : this.findNode(source),
-                target : this.findNode(target)
-            });
-            console.info(this.links);
-        }
+    force.start();	//开始作用
 
-        //增加多个连线
-        Topology.prototype.addLinks = function(links) {
-            console.info(6);
-            if (Object.prototype.toString.call(links) == '[object Array]') {
-                var self = this;
-                console.info(self.links);
-                links.forEach(function(link) {
-                    self.addLink(link['source'], link['target']);
-                });
-            }
-        }
+    console.log(nodes);
+    console.log(edges);
 
-        //删除节点
-        Topology.prototype.removeNode = function(id) {
-            console.info(7);
-            var i = 0, n = this.findNode(id), links = this.links;
-            while (i < links.length) {
-                links[i]['source'] == n || links[i]['target'] == n ? links
-                        .splice(i, 1) : ++i;
-            }
-            this.nodes.splice(this.findNodeIndex(id), 1);
-        }
+    //添加连线
+    var svg_edges = svg.selectAll("line")
+            .data(edges)
+            .enter()
+            .append("line")
+            .style("stroke","#59cbdb")
+            .style("stroke-width",2);
 
-        //删除节点下的子节点，同时清除link信息
-        Topology.prototype.removeChildNodes = function(id) {
-            console.info(8);
-            var node = this.findNode(id), nodes = this.nodes;
-            links = this.links, self = this;
+    var color = d3.scale.category20();
 
-            var linksToDelete = [], childNodes = [];
-
-            links.forEach(function(link, index) {
-                link['source'] == node && linksToDelete.push(index)
-                && childNodes.push(link['target']);
-            });
-
-            linksToDelete.reverse().forEach(function(index) {
-                links.splice(index, 1);
-            });
-
-            var remove = function(node) {
-                var length = links.length;
-                for (var i = length - 1; i >= 0; i--) {
-                    if (links[i]['source'] == node) {
-                        var target = links[i]['target'];
-                        links.splice(i, 1);
-                        nodes.splice(self.findNodeIndex(node.id), 1);
-                        remove(target);
-
+    //添加节点
+    var svg_nodes = svg.selectAll("image")
+            .data(nodes)
+            .enter()
+            .append("image")
+            .attr("width",img_w)
+            .attr("height",img_h)
+            .attr("xlink:href",function(d){
+                return d.image;
+            }).on("mouseover",function(d,i){
+                //显示连接线上的文字
+                edges_text.style("fill-opacity",function(edge){
+                    if( edge.source === d || edge.target === d ){
+                        return 1.0;
                     }
-                }
-            }
-
-            childNodes.forEach(function(node) {
-                remove(node);
+                });
+            })
+            .on("mouseout",function(d,i){
+                //隐去连接线上的文字
+                edges_text.style("fill-opacity",function(edge){
+                    if( edge.source === d || edge.target === d ){
+                        return 0.0;
+                    }
+                });
             });
 
-            //清除没有连线的节点
-            for (var i = nodes.length - 1; i >= 0; i--) {
-                var haveFoundNode = false;
-                for (var j = 0, l = links.length; j < l; j++) {
-                    (links[j]['source'] == nodes[i] || links[j]['target'] == nodes[i])
-                    && (haveFoundNode = true)
-                }
-                !haveFoundNode && nodes.splice(i, 1);
-            }
-        }
+    //添加描述节点的文字
+    var svg_texts = svg.selectAll("text")
+            .data(nodes)
+            .enter()
+            .append("text")
+            .style("fill", "black")
+            .attr("dx", 20)
+            .attr("dy", 8)
+            .text(function(d){
+                return d.name;
+            });
 
-        //查找节点
-        Topology.prototype.findNode = function(id) {
-            console.info(9);
-            var nodes = this.nodes;
-            for ( var i in nodes) {
-                if (nodes[i]['id'] == id)
-                    return nodes[i];
-            }
-            return null;
-        }
+    //添加连接线上文字
+    var edges_text = svg.selectAll(".linetext")
+            .data(edges)
+            .enter()
+            .append("text")
+            .attr("class","linetext")
+            .text(function(d){
+                return d.relation;
+            });
 
-        //查找节点所在索引号
-        Topology.prototype.findNodeIndex = function(id) {
-            console.info(10);
-            var nodes = this.nodes;
-            for ( var i in nodes) {
-                if (nodes[i]['id'] == id)
-                    return i;
-            }
-            return -1;
-        }
 
-        //节点点击事件
-        Topology.prototype.setNodeClickFn = function(callback) {
-            console.info(11);
-            this.clickFn = callback;
-        }
+    force.on("tick", function(){	//对于每一个时间间隔
 
-        //更新拓扑图状态信息
-        Topology.prototype.update = function() {
-            console.info(12);
-            var link = this.vis.selectAll("line.link").data(this.links,
-                    function(d) {
-                        return d.source.id + "-" + d.target.id;
-                    })
-                    .attr(
-                    "class",
-                    function(d) {
-                        return d['source']['status']
-                        && d['target']['status'] ? 'link'
-                                : 'link link_error';
-                    });
-
-            link.enter().insert("svg:line", "g.node")
-                    .attr(
-                    "class",
-                    function(d) {
-                        return d['source']['status']
-                        && d['target']['status'] ? 'link'
-                                : 'link link_error';
-                    });
-
-            link.exit().remove();
-
-            var node = this.vis.selectAll("g.node").data(this.nodes,
-                    function(d) {
-                        return d.id;
-                    });
-
-            var nodeEnter = node.enter().append("svg:g").attr("class", "node");
-//                    .call(this.force.drag);//this.force.drag 设置节点可拖拽
-
-            //增加图片，可以根据需要来修改
-            var self = this;
-            nodeEnter
-                    .append("svg:image")
-                    .attr("class", "circle")
-                    .attr(
-                    "xlink:href",
-                    function(d) {
-                        //根据类型来使用图片
-                        return d.expand ? "http://ww2.sinaimg.cn/large/412e82dbjw1dsbny7igx2j.jpg"
-                                : "http://ww4.sinaimg.cn/large/412e82dbjw1dsbnxezrrpj.jpg";
-                    }).attr("x", "-32px").attr("y", "-32px").attr(
-                    "width", "64px").attr("height", "64px").on('click',
-                    function(d) {
-                        d.expand && self.clickFn(d);
-                    })
-
-            nodeEnter.append("svg:text").attr("class", "nodetext").attr("dx",
-                    15).attr("dy", -35).text(function(d) {
-                        return d.id
-                    });
-
-            node.exit().remove();
-
-            this.force.start();
-        }
-
-        var topology = new Topology('container');
-
-        var nodes = [ {
-            id : '10.4.42.1',
-            type : 'router',
-            status : 1
-        }, {
-            id : '10.4.43.1',
-            type : 'switch',
-            status : 1,
-            expand : true
-        }, {
-            id : '10.4.44.1',
-            type : 'switch',
-            status : 1
-        }, {
-            id : '10.4.45.1',
-            type : 'switch',
-            status : 0
-        }
-
-        ];
-
-        var childNodes = [ {
-            id : '10.4.43.2',
-            type : 'switch',
-            status : 1
-        }, {
-            id : '10.4.43.3',
-            type : 'switch',
-            status : 1
-        }
-
-        ];
-
-        var links = [ {
-            source : '10.4.42.1',
-            target : '10.4.43.1'
-        }, {
-            source : '10.4.42.1',
-            target : '10.4.44.1'
-        }, {
-            source : '10.4.42.1',
-            target : '10.4.45.1'
-        } ];
-
-        var childLinks = [ {
-            source : '10.4.43.1',
-            target : '10.4.43.2'
-        }, {
-            source : '10.4.43.1',
-            target : '10.4.43.3'
-        }, {
-            source : '10.4.43.2',
-            target : '10.4.43.3'
-        } ]
-
-        topology.addNodes(nodes);
-        topology.addLinks(links);
-        //可展开节点的点击事件
-        topology.setNodeClickFn(function(node) {
-            if (!node['_expanded']) {
-                expandNode(node.id);
-                node['_expanded'] = true;
-            } else {
-                collapseNode(node.id);
-                node['_expanded'] = false;
-            }
+        //限制结点的边界
+        nodes.forEach(function(d,i){
+            d.x = d.x - img_w/2 < 0     ? img_w/2 : d.x ;
+            d.x = d.x + img_w/2 > width ? width - img_w/2 : d.x ;
+            d.y = d.y - img_h/2 < 0      ? img_h/2 : d.y ;
         });
-        topology.update();
 
-        function expandNode(id) {
-            topology.addNodes(childNodes);
-            topology.addLinks(childLinks);
-            topology.update();
-        }
 
-        function collapseNode(id) {
-            topology.removeChildNodes(id);
-            topology.update();
-        }
+        //更新连线坐标
+        svg_edges.attr("x1",function(d){ return d.source.x; })
+                .attr("y1",function(d){ return d.source.y; })
+                .attr("x2",function(d){ return d.target.x; })
+                .attr("y2",function(d){ return d.target.y; });
+
+        //更新节点坐标
+
+        svg_nodes.attr("x",function(d){ return d.x - img_w/2; });
+        svg_nodes.attr("y",function(d){ return d.y - img_h/2; });
+
+        //更新文字坐标
+        svg_texts.attr("x", function(d){ return d.x; })
+                .attr("y", function(d){ return d.y; });
+
+        //更新连接线上文字的位置
+        edges_text.attr("x",function(d){ return (d.source.x + d.target.x) / 2 ; });
+        edges_text.attr("y",function(d){ return (d.source.y + d.target.y) / 2 ; });
+
+    });
+
 
 </script>
 </body>
