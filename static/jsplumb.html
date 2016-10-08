@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
+    <script src="/TopologyPrj/js/jquery.jsPlumb-1.4.0-all.js"></script>
+    <script src="/TopologyPrj/js/testJsPlumb.js"></script>
+    <style type="text/css">
+
+        .dragActive { border:2px dotted orange; }
+        .dropHover { border:1px dotted red; }
+        .rootNode {
+            background-color: #79deff;
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            background-image: url(/TopologyPrj/image/monitor_server.png);
+            background-size: 75px 75px;
+            background-repeat: no-repeat;
+            background-position:center;
+            -webkit-box-shadow: #909090 0px 0px 10px;
+            -moz-box-shadow: #909090 0px 0px 10px;
+            box-shadow: #909090 0px 0px 10px;
+        }
+        .instanceNode {
+        //    background-color: #50d4ff;
+            width: 60px;
+            height: 80px;
+            position: absolute;
+            background-image: url(/TopologyPrj/image/instance_big.png);
+            background-size: 50px 53px;
+            background-repeat: no-repeat;
+            background-position:center;
+            -moz-background-size: 50px 53px;
+            filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/instance_big.png', sizingMethod='scale')\9;
+            -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/instance_big.png',sizingMethod='scale')"\9;
+            cursor:pointer;
+            /* -webkit-box-shadow: #666 0px 0px 10px;
+            -moz-box-shadow: #666 0px 0px 10px;
+            box-shadow: #666 0px 0px 10px; */
+        }
+        .dbNode {
+        //    background-color: #50d4ff;
+            width: 60px;
+            height: 80px;
+            position: absolute;
+            background-image: url(/TopologyPrj/image/ORA.png);
+            background-size: 50px 53px;
+            background-repeat: no-repeat;
+            background-position:center;
+            -moz-background-size: 50px 53px;
+            filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/ORA.png', sizingMethod='scale')\9;
+            -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/ORA.png',sizingMethod='scale')"\9;
+            cursor:pointer;
+        }
+        .extNode {
+        //    background-color: #50d4ff;
+            width: 60px;
+            height: 80px;
+            position: absolute;
+            background-image: url(/TopologyPrj/image/extract_monitor.png);
+            background-size: 50px 53px;
+            background-repeat: no-repeat;
+            background-position:center;
+            -moz-background-size: 50px 53px;
+            filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/extract_monitor.png', sizingMethod='scale')\9;
+            -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/extract_monitor.png',sizingMethod='scale')"\9;
+            cursor:pointer;
+        }
+        .pmpNode {
+        //    background-color: #50d4ff;
+            width: 60px;
+            height: 80px;
+            position: absolute;
+            background-image: url(/TopologyPrj/image/pump_monitor.png);
+            background-size: 50px 53px;
+            background-repeat: no-repeat;
+            background-position:center;
+            -moz-background-size: 50px 53px;
+            filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/pump_monitor.png', sizingMethod='scale')\9;
+            -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/pump_monitor.png',sizingMethod='scale')"\9;
+            cursor:pointer;
+        }
+        .repNode {
+        //    background-color: #50d4ff;
+            width: 60px;
+            height: 80px;
+            position: absolute;
+            background-image: url(/TopologyPrj/image/replicat_monitor.png);
+            background-size: 50px 53px;
+            background-repeat: no-repeat;
+            background-position:center;
+            -moz-background-size: 50px 53px;
+            filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/replicat_monitor.png', sizingMethod='scale')\9;
+            -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/replicat_monitor.png',sizingMethod='scale')"\9;
+            cursor:pointer;
+        }
+        .trailNode {
+        //    background-color: #50d4ff;
+            width: 45px;
+            height: 60px;
+            position: absolute;
+            background-image: url(/TopologyPrj/image/trail.png);
+            background-size: 35px 38px;
+            background-repeat: no-repeat;
+            background-position:center;
+            -moz-background-size: 35px 38px;
+            filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/cdr/imagesimages/trail.png', sizingMethod='scale')\9;
+            -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='images/trail.png',sizingMethod='scale')"\9;
+            cursor:pointer;
+        }
+        .nodeWord{
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+        .cursorEndpoint{
+            cursor:pointer;
+        }
+    </style>
+
+</head>
+
+<body style="overflow: scroll;">
+<div id="top_server" class="rootNode"><div style=""></div></div>
+</body>
+
+
+</html>
