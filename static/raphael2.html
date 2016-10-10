@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
+<script src="/TopologyPrj/js/raphael.min.js"></script>
+<body>
+<div id="mypaper"></div>
+<script>
+    Raphael.fn.connection = function(obj1, obj2, line, bg) {
+        if (obj1.line && obj1.from && obj1.to) {
+            line = obj1;
+            obj1 = line.from;
+            obj2 = line.to;
+        }
+
+        var bb1 = obj1.getBBox(),
+                bb2 = obj2.getBBox(),
+                p = [ {
+                    x : bb1.x + bb1.width / 2,
+                    y : bb1.y - 1
+                }, {
+                    x : bb1.x + bb1.width / 2,
+                    y : bb1.y + bb1.height + 1
+                }, {
+                    x : bb1.x - 1,
+                    y : bb1.y + bb1.height / 2
+                }, {
+                    x : bb1.x + bb1.width + 1,
+                    y : bb1.y + bb1.height / 2
+                }, {
+                    x : bb2.x + bb2.width / 2,
+                    y : bb2.y - 1
+                }, {
+                    x : bb2.x + bb2.width / 2,
+                    y : bb2.y + bb2.height + 1
+                }, {
+                    x : bb2.x - 1,
+                    y : bb2.y + bb2.height / 2
+                }, {
+                    x : bb2.x + bb2.width + 1,
+                    y : bb2.y + bb2.height / 2
+                } ],
+                d = {},
+                dis = [];
+
+        for (var i = 0; i < 4; i++) {
+            for (var j = 4; j < 8; j++) {
+                var dx = Math.abs(p[i].x - p[j].x), dy = Math.abs(p[i].y
+                        - p[j].y);
+                if ((i == j - 4)
+                        || (((i != 3 && j != 6) || p[i].x < p[j].x)
+                        && ((i != 2 && j != 7) || p[i].x > p[j].x)
+                        && ((i != 0 && j != 5) || p[i].y > p[j].y)
+                        && ((i != 1 && j != 4) || p[i].y < p[j].y))) {
+                    dis.push(dx + dy);
+                    d[dis[dis.length - 1]] = [ i, j ];
+                }
+            }
+        }
+        if (dis.length == 0) {
+            var res = [ 0, 4 ];
+        } else {
+            res = d[Math.min.apply(Math, dis)];
+        }
+        var x1 = p[res[0]].x, y1 = p[res[0]].y, x4 = p[res[1]].x, y4 = p[res[1]].y;
+        dx = Math.max(Math.abs(x1 - x4) / 2, 10);
+        dy = Math.max(Math.abs(y1 - y4) / 2, 10);
+        var x2 = [ x1, x1, x1 - dx, x1 + dx ][res[0]].toFixed(3), y2 = [
+            y1 - dy, y1 + dy, y1, y1 ][res[0]].toFixed(3), x3 = [ 0, 0,
+            0, 0, x4, x4, x4 - dx, x4 + dx ][res[1]].toFixed(3), y3 = [
+            0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4 ][res[1]].toFixed(3);
+        var path = [ "M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3,
+            y3, x4.toFixed(3), y4.toFixed(3) ].join(",");
+        if (line && line.line) {
+            line.bg && line.bg.attr({
+                path : path
+            });
+            line.line.attr({
+                path : path
+            });
+        } else {
+            var color = typeof line == "string" ? line : "#000";
+            return {
+                bg : bg && bg.split && this.path(path).attr({
+                    stroke : bg.split("|")[0],
+                    fill : "none",
+                    //"stroke-width" : bg.split("|")[1] || 3
+                    "stroke-width" : 2
+                }),
+                line : this.path(path).attr({
+                    stroke : color,
+                    fill : "none"
+                }),
+                from : obj1,
+                to : obj2
+            };
+        }
+    };
+</script>
+<script>
+    var r = Raphael("mypaper", 470, 670);
+    var src1 = "https://console.ustack.com/static/modules/instance/i/icon-network.png";
+    var src2 = "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png";
+    var src3 = "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_windows.png";
+    var shapes = [
+        r.image( src1, 55, 5, 150, 50), //internet
+        r.image( src1, 100, 85, 60, 35), //核心
+        r.image( src1, 300, 25, 100, 55), //CP
+        r.image( src1, 250, 90, 60, 35), //DNS
+        r.image( src1, 100, 165, 60, 35), //Base
+        r.image( src1, 100, 245, 60, 40), //OLT
+        r.image( src1, 100, 325, 60, 35), //分光器
+        r.image( src1, 100, 405, 60, 20), //ONU
+        r.image( src1, 250, 405, 60, 20), //其他ONU
+        r.image( src1, 100, 485, 60, 40), //用户网关
+        r.image( src1, 250, 485, 60, 40), //其他用户
+        r.image( src1, 100, 565, 60, 40), //终端
+        r.image( src1, 250, 565, 60, 40), //大麦
+    ];
+    r.text(130, 25,  "Internet").attr({ fill : "#000", "font-size" : 13 });
+    r.text(160, 130,      "核心").attr({ fill : "#000", "font-size" : 13 });
+    r.text(300, 140,      "dns").attr({ fill : "#000", "font-size" : 13 });
+    r.text(350, 50,        "CP").attr({ fill : "#000", "font-size" : 13 });
+    r.text(160, 210,     "Base").attr({ fill : "#000", "font-size" : 13 });
+    r.text(160, 290,      "OLT").attr({ fill : "#000", "font-size" : 13 });
+    r.text(160, 370,     "分光器").attr({ fill : "#000", "font-size" : 13 });
+    r.text(160, 433,      "ONU").attr({ fill : "#000", "font-size" : 13 });
+    r.text(320, 433,   "其它ONU").attr({ fill : "#000", "font-size" : 13 });
+    r.text(165, 535,    "用户网关").attr({ fill : "#000", "font-size" : 13 });
+    r.text(160, 615,       "终端").attr({ fill : "#000", "font-size" : 13});
+    r.text(300, 615,       "大麦").attr({ fill : "#000", "font-size" : 13});
+
+    connections = [];
+    //internet,  核心,   CP,    DNS,    Base,    OLT,    分光器,    ONU,    其他ONU,    用户网关,    其他用户,    终端,    大麦
+    //   0        1     2       3       4        5       6        7        8         9         10       11     12
+    var dogline1  = r.connection(shapes[0], shapes[1], "green", "green");   //dog1
+    var dogline2  = r.connection(shapes[1], shapes[4], "green", "green");   //dog2
+    var dogline11 = r.connection(shapes[2], shapes[1], "green", "green");   //dog11
+    var dogline10 = r.connection(shapes[3], shapes[1], "green", "green");   //dog10
+    var dogline3  = r.connection(shapes[4], shapes[5], "green", "green");   //dog3
+    var dogline4  = r.connection(shapes[5], shapes[6], "green", "green");   //dog4
+    var dogline5  = r.connection(shapes[6], shapes[7], "green", "green");   //dog5
+    var dogline9  = r.connection(shapes[6], shapes[8], "green", "green");   //dog9
+    var dogline6  = r.connection(shapes[7], shapes[9], "green", "green");   //dog6
+    var doglineotheronu  = r.connection(shapes[8], shapes[10], "green", "green");   //
+    var dogline7  = r.connection(shapes[9], shapes[11], "green", "green");  //dog7
+    var dogline8  = r.connection(shapes[9], shapes[12], "green", "green");  //dog8
+
+    //将有故障的设备，打叉
+    function drawX(mypaper, p1, p2, length){
+        var line1x1 = p1 - length;
+        var line1y1 = p2 + length;
+        var line1x2 = p1 + length;
+        var line1y2 = p2 - length;
+
+        var line2x1 = p1 + length;
+        var line2y1 = p2 + length;
+        var line2x2 = p1 - length;
+        var line2y2 = p2 - length;
+        var obj;
+        obj = mypaper.path("M "+line1x1+","+line1y1+" L "+line1x2+","+line1y2+" M "+line2x1+","+line2y1+" L "+line2x2+","+line2y2+" ").attr({fill: "red", stroke: "red","stroke-width" : 4});
+        return obj;
+    }
+
+    var xOLT = drawX(r, 130, 265, 16);
+    var xONU = drawX(r, 280, 414, 16);
+    var xONU = drawX(r, 130, 414, 16);
+
+    var xdogLine1 = drawX(r, shapes[4].getBBox().x + 30, shapes[4].getBBox().y + 55, 10);
+    var xdogLine2 = drawX(r, shapes[5].getBBox().x + 30, shapes[5].getBBox().y + 55, 10);
+    var xdogLine3 = drawX(r, shapes[6].getBBox().x + 30, shapes[6].getBBox().y + 55, 10);
+
+    var lineSplit1 = r.path("M 1,235 L 440,235 ").attr({fill: "none", stroke: "gray","stroke-width" : 1});
+    var lineSplit2 = r.path("M 1,395 L 440,395 ").attr({fill: "none", stroke: "gray","stroke-width" : 1});
+    var lineSplit3 = r.path("M 1,445 L 440,445 ").attr({fill: "none", stroke: "gray","stroke-width" : 1});
+
+    r.text(400, 180,  "核心层").attr({ fill : "#000", "font-size" : 13 });
+    r.text(400, 333,  "汇聚层").attr({ fill : "#000", "font-size" : 13 });
+    r.text(400, 420,  "楼道层").attr({ fill : "#000", "font-size" : 13 });
+    r.text(400, 480,  "用户层").attr({ fill : "#000", "font-size" : 13 });
+
+</script>
+</body>
+</html>
