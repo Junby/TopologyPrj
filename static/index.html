@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>动态生成拓扑图</title>
+</head>
+<script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
+<script src="/TopologyPrj/js/d3.js"></script>
+<script src="/TopologyPrj/js/raphael.min.js"></script>
+<style type="text/css">
+    #frame{
+        width:700px;
+        height:600px;
+        border:1px solid gray;
+        border-radius:5px;
+        position:relative;
+        margin:20px;
+    }
+</style>
+<body>
+<div id="frame"></div>
+</body>
+
+<script>
+    $(function(){
+        var t = new Topology("frame");
+        t.setTop();
+        t.setTopRect();
+        t.setVmRect();
+        t.setBottomRect();
+        t.setCenterRect();
+        t.connection(t.obj.cenObj, t.obj.vmObj);
+        t.connection(t.obj.botObj, t.obj.vmObj);
+    });
+</script>
+<script>
+    function Topology(ele,width,height){
+        var width = width;
+        var height = height;
+        if(!width){
+            width = 700;
+        }
+        if(!height){
+            height = 500;
+        }
+
+        this.raphael = Raphael(ele,width,height);
+        this.width = width;
+        this.height = height;
+        this.padding = 20;
+        this.topPadding = null;
+        this.rate = 7;
+        this.objW = this.width / this.rate;
+        this.objH = this.height / (this.rate + 2);
+        this.src = {
+            pubSrc : "https://console.ustack.com/static/modules/instance/i/icon-public-network.png",
+            vmSrc : "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png"
+        };
+        this.color = ["#59cbdb","#d5dee2"];
+        this.obj = {}
+
+    }
+
+    function cheatObj(x,y,w,h){
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+
+    Topology.prototype.setTop = function(src){
+        var img = src ? src : this.src.pubSrc;
+        var x = this.width / 2 - this.objW / 2;
+        var y = this.padding;
+        this.topPadding = this.padding + this.objH;
+        this.raphael.image(img,x,y,this.objW,this.objH);
+    }
+
+    Topology.prototype.setTopRect = function(){
+        this.raphael.rect(0,this.topPadding,this.width,5,2).attr({fill : this.color[0],stroke : this.color[0]});
+        var obj = new cheatObj(0,this.topPadding,this.width,5);
+        this.obj.topObj = obj;
+    }
+
+    Topology.prototype.setBottomRect = function(){
+        var rate = 1.5;
+        var space = (this.width - this.width / rate) / 2;
+        var y = this.obj.vmObj.y + this.obj.vmObj.h + 2 * this.padding;
+        this.raphael.rect(space,y,this.width / rate,5,2).attr({fill : this.color[0],stroke : this.color[0]});
+        var obj = new cheatObj(space,y,this.width / rate,5);
+        this.obj.botObj = obj;
+    }
+
+    Topology.prototype.setCenterRect = function(){
+        var rate = 1.5;
+        var space = (this.width - this.width / rate) / 2;
+        var y = this.obj.vmObj.y - 2 * this.padding;
+        this.raphael.rect(space,y,this.width / rate,5,2).attr({fill : this.color[0],stroke : this.color[0]});
+        var obj = new cheatObj(space,y,this.width / rate,5);
+        this.cenObj = obj;
+        this.obj.cenObj = obj;
+    }
+
+    Topology.prototype.setVmRect = function(src,name){
+        var x = this.width / 2 - this.objW / 2;
+        var y = this.height / 3 * 2 - this.objH / 2 ;
+        var img = src ? src : this.src.vmSrc;
+        var img_w = 30,img_h = 30;
+        var img_x = (2 * x + this.objW) / 2 - img_w / 2;
+        var img_y = y + this.padding / 4;
+        var text_x = this.width / 2;
+        var text_y = y + this.objH - this.padding / 2;
+        var name = name ? name : "vm";
+        this.raphael.rect(x,y,this.objW,this.objH,2).attr({stroke : this.color[1],class : "vmClass"});
+        this.raphael.image(img,img_x,img_y,img_w,img_h);
+        this.raphael.text(text_x,text_y,name).attr({ fill : "#000", "font-size" : 13 });
+        var obj = new cheatObj(x,y,this.objW,this.objH);
+        this.obj.vmObj = obj;
+    }
+
+    Topology.prototype.connection = function(obj1,obj2){
+        var x1 = obj1.x,x2 = obj2.x,y1 = obj1.y,y2 = obj2.y;
+//        console.info(y1);
+//        console.info(y2);
+        if(y1 < y2){
+            x1 = obj1.x + obj1.w / 2;
+            y1 = obj1.y + obj1.h;
+            x2 = obj2.x + obj2.w / 2;
+            y2 = obj2.y;
+        }else{
+            x1 = obj1.x + obj1.w / 2;
+            y1 = obj1.y;
+            x2 = obj2.x + obj2.w / 2;
+            y2 = obj2.y + obj2.h;
+        }
+        console.info(x1);
+        console.info(x2);
+        console.info(y1);
+        console.info(y2);
+        var path = [ "M", x1, y1, "L", x2, y2 ].join(",");
+        this.raphael.path(path).attr({fill: "none", stroke: "gray","stroke-width" : 1});
+    }
+
+</script>
+</html>

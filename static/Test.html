@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
+<script src="/TopologyPrj/js/d3.js"></script>
+<script src="/TopologyPrj/js/raphael.min.js"></script>
+<body>
+
+</body>
+<script>
+    function getArrow(r,size,delta,x1,y1,x2,y2){
+        var angle = r.angle(x1,y1,x2,y2);//获得两点之间的角度
+        var a45 = r.rad(angle - delta)//角度转换成弧度
+
+        var a45m = r.rad(angle + delta);
+
+        var x2a = Number(x2) + Math.cos(a45) * size;
+
+        var y2a = Number(y2) + Math.sin(a45) * size;
+
+        var x2b = Number(x2) + Math.cos(a45m)* size;
+
+        var y2b = Number(y2) + Math.sin(a45m) * size;
+
+        return [x2a.toFixed(3),y2a.toFixed(3),x2b.toFixed(3),y2b.toFixed(3)];
+    }
+
+    Raphael.fn.connection = function (obj1, obj2, line,text) {
+
+        if (obj1.line && obj1.from && obj1.to) {
+            line = obj1;
+            obj1 = line.from;
+            obj2 = line.to;
+
+            text = line.text;
+        }
+
+        var bb1 = obj1.getBBox(),
+                bb2 = obj2.getBBox(),
+                p = [{x: bb1.x + bb1.width / 2, y: bb1.y - 1},
+                    {x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + 1},
+                    {x: bb1.x - 1, y: bb1.y + bb1.height / 2},
+                    {x: bb1.x + bb1.width + 1, y: bb1.y + bb1.height / 2},
+                    {x: bb2.x + bb2.width / 2, y: bb2.y - 1},
+                    {x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + 1},
+                    {x: bb2.x - 1, y: bb2.y + bb2.height / 2},
+                    {x: bb2.x + bb2.width + 1, y: bb2.y + bb2.height / 2}],
+                d = {}, dis = [];
+
+        for (var i = 0; i < 4; i++) {
+            for (var j = 4; j < 8; j++) {
+                var dx = Math.abs(p[i].x - p[j].x),
+                        dy = Math.abs(p[i].y - p[j].y);
+                if ((i == j - 4) || (((i != 3 && j != 6) || p[i].x < p[j].x) && ((i != 2 && j != 7) || p[i].x > p[j].x) && ((i != 0 && j != 5) || p[i].y > p[j].y) && ((i != 1 && j != 4) || p[i].y < p[j].y))) {
+                    dis.push(dx + dy);
+                    d[dis[dis.length - 1]] = [i, j];
+                }
+            }
+        }
+
+        if (dis.length == 0) {
+            var res = [0, 4];
+        } else {
+            res = d[Math.min.apply(Math, dis)];
+        }
+
+        var x1 = p[res[0]].x,
+                y1 = p[res[0]].y,
+                x4 = p[res[1]].x,
+                y4 = p[res[1]].y;
+        dx = Math.max(Math.abs(x1 - x4) / 2, 10);
+        dy = Math.max(Math.abs(y1 - y4) / 2, 10);
+        var x2 = [x1, x1, x1 - dx, x1 + dx][res[0]].toFixed(3),
+                y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3),
+                x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3),
+                y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
+
+        x1 = x1.toFixed(3);
+        y1 = y1.toFixed(3);
+        x4 = x4.toFixed(3);
+        y4 = y4.toFixed(3);
+        var arrow = getArrow(Raphael,10,20,x3,y3,x4,y4);
+
+        var path = ["M", x1, y1, "C", x2, y2, x3, y3, x4, y4,"L",arrow[0],arrow[1],"M",x4,y4,"L",arrow[2],arrow[3]].join(",");
+        // var path = ["M", x1.toFixed(3), y1.toFixed(3), "C", x2, y2, x3, y3, x4.toFixed(3), y4.toFixed(3)].join(",");
+
+        if (line && line.line) {
+            line.line.attr({path: path});
+
+        } else {
+            var color = typeof line == "string" ? line : "#00B8FF";
+            return {
+                text:text,
+                line: line && line.split && this.path(path).attr({stroke: line.split("|")[0], fill: "none", "stroke-width": line.split("|")[1] || 1}),
+                from: obj1,
+                to: obj2
+            };
+        }
+    };
+</script>
+<script>
+    var util = util || {};
+    util.page = util.page || {};
+
+    util.page.getViewWidth = function () {
+        var doc = document,
+                client = doc.compatMode == 'BackCompat' ? doc.body : doc.documentElement;
+
+        return client.clientWidth;
+    };
+    util.page.getHeight = function () {
+        var doc = document,
+                body = doc.body,
+                html = doc.documentElement,
+                client = doc.compatMode == 'BackCompat' ? body : doc.documentElement;
+
+        return Math.max(html.scrollHeight, body.scrollHeight, client.clientHeight);
+    };
+
+    var test = test || {};
+
+    test = {
+        w:960,
+        h:480,
+        styles:{
+            point:[170,60]
+        },
+        r:null,//(function(){
+        connections:[],//关系集合
+        graphs:null,// rect集合
+        maps:[],//顶点和索引的对应关系，为了建立索引关系
+
+        config:null
+    }
+
+    test.showGraph = function(){
+        var me = test,
+                w = util.page.getViewWidth(),
+                h=util.page.getHeight();
+
+        me.w=w - 280;
+        me.h = h - 30;
+        me.r = Raphael("canvas",me.w, me.h);
+        me.graphs = me.r.set();
+        var w = me.w,
+                h=me.h;
+
+        var cellW = 240;
+        var cellH = 120;
+        var num = Math.floor(w / cellW);
+        test.renderGraph();
+    }
+
+    test.renderConnections = function(lines){
+        var me = test;
+
+        $.each(lines, function(key, value){
+            var from = value.fromStateId;
+            var to = value.toStateID;
+            var r = me.r;
+            var graphs = me.graphs,
+                    maps = me.maps;
+
+            // [maps[from]] graphs[maps[to]] 是索引值
+            me.connections.push(r.connection(graphs[maps[from]], graphs[maps[to]],'#4848fe'));
+        });
+    }
+
+    test.redrawConnections = function(){
+        var me = test,
+                r= me.r,
+                connections = me.connections;
+
+        $.each(connections, function(key, value){
+            r.connection(value);
+        });
+    }
+
+    test.handlerMove = function(target){
+        var me = test;
+
+        var x = parseInt(target.style.left,10);
+        var y = parseInt(target.style.top,10);
+
+        if(Math.abs(x-me.ox) < 5 &&  Math.abs(y - me.oy) < 5){
+            return;
+        }
+
+        var att = {x:x,y:y};
+
+        //var id = T.dom.getAttr(target,'data-id');
+        var id = $(target).attr("data-id");
+
+        var rect = me.r.getById(id);
+
+        rect.attr(att);
+
+        me.redrawConnections();
+        me.r.safari();
+
+    }
+
+    test.createGraph = function(i, graph){
+
+        var me = test;
+        var template = "";
+
+        graph.index = i;
+
+        // x, y 需要详看
+        var x , y;
+        if(graph.xCoordinate){
+            x = graph.xCoordinate;
+        }else{
+            x = ((i%num) + 0.2)* cellW;
+        }
+        if(graph.yCoordinate){
+            y = graph.yCoordinate;
+
+        }else{
+            y = 20 + (~~(i/num)*cellH );
+        }
+
+        graph.x = x;
+        graph.y = y;
+
+
+        var temp = _.template($("#T-graph").html(), {"data": graph});
+
+        // render svg rect
+        var stateR  =me.r.rect(0,0,me.styles.point[0],me.styles.point[1]);
+
+        stateR.id = graph.id;
+        stateR.attr({x:x,y:y}); // 给rect 位置
+
+        stateR.attr({fill: '#fff', "fill-opacity": 0, "stroke-width":1, 'stroke-opacity':0,cursor: "move"});
+
+
+        $("#graph").append(temp);
+        var graphDom = $(".graph").eq(i);
+        var width = graphDom.width();
+        width = parseInt(width,10)+10+32+5;
+        width = width < 150?150:width;
+        graphDom.width(width);
+
+        stateR.attr({width:width});
+
+        me.graphs.push(stateR);
+
+        me.maps[graph.id] = i;
+
+        graphDom.draggable({
+            cursor: "move",
+            start:function(){
+                test.handlerMove(graphDom[0]);
+            },
+            drag:function(){
+                test.handlerMove(graphDom[0]);
+            }
+        });
+    }
+
+    test.renderGraph = function(){
+        var me = test;
+        $.ajax({
+            url: '../json/position.json',
+            type : 'POST',
+            dataType: "json",
+            data: {},
+            success: function(json){
+
+                if (json.success){
+                    var data = json.data,
+                            graphsData = data.states,
+                            connectionData = data.relations;
+
+                    // render graph and svg rect
+                    // 这一块可以抽离出去
+                    $.each(graphsData, function(i, graph){
+
+                        test.createGraph(i, graph);
+
+                    });
+
+
+                    test.renderConnections(connectionData);
+
+                } else {
+                    alert(json.message);
+                }
+            },
+            error: function(){
+                alert("后端返回失败");
+            }
+        });
+    }
+
+    $(function(){
+        test.showGraph();
+    });
+</script>
+</html>

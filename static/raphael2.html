@@ -102,6 +102,7 @@
 </script>
 <script>
     var r = Raphael("mypaper", 470, 670);
+    console.info(r);
     var src1 = "https://console.ustack.com/static/modules/instance/i/icon-network.png";
     var src2 = "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png";
     var src3 = "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_windows.png";
@@ -120,6 +121,7 @@
         r.image( src1, 100, 565, 60, 40), //终端
         r.image( src1, 250, 565, 60, 40), //大麦
     ];
+    console.info(shapes);
     r.text(130, 25,  "Internet").attr({ fill : "#000", "font-size" : 13 });
     r.text(160, 130,      "核心").attr({ fill : "#000", "font-size" : 13 });
     r.text(300, 140,      "dns").attr({ fill : "#000", "font-size" : 13 });
