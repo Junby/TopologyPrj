@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <title>动态生成拓扑图</title>
 </head>
-<script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
+<!--<script src="/TopologyPrj/js/bootstrap.min.js"></script>-->
+<!--<link href="/TopologyPrj/css/bootstrap.css" rel="stylesheet">-->
+<script src="/TopologyPrj/js/jquery-1.7.2.js"></script>
 <script src="/TopologyPrj/js/d3.js"></script>
 <script src="/TopologyPrj/js/raphael.min.js"></script>
 <style type="text/css">
@@ -23,28 +25,87 @@
 
 <script>
     $(function(){
-        var t = new Topology("frame");
-        t.setTop();
-        t.setTopRect();
-        t.setVmRect();
-        t.setBottomRect();
-        t.setCenterRect();
-        t.connection(t.obj.cenObj, t.obj.vmObj);
-        t.connection(t.obj.botObj, t.obj.vmObj);
+        var data = {
+            success : true,
+            message : "",
+            data : {
+                name : "vm-test",
+                id : "id",
+                status : "running",
+                publicIp : "ip",
+                nic : [
+                    {
+                        id : "id1",
+                        name : "net1",
+                        ip : "ip1",
+                        default : true,
+                        type : "isolate"
+                    },
+                    {
+                        id : "id2",
+                        name : "net2",
+                        ip : "ip2",
+                        default : false,
+                        type : "isolate"
+                    }
+                ],
+                volume : [
+                    {
+                        id : "id",
+                        name : "root",
+                        size : 20,
+                        type : "root"
+                    }
+                ]
+            }
+        }
+
+       createVmTopology("frame",data.data,700,600);
+        $(".vmClass").mouseover(function(){
+            console.log(1);
+        });
+
     });
 </script>
 <script>
-    function Topology(ele,width,height){
+
+    function createVmTopology(ele,data,width,height){
+        var t = new Topology(ele);
+        t.setTop();
+        t.setTopRect();
+        t.setVmRect(data);
+        t.setBottomRect();
+        t.setCenterRect();
+        t.setVolume(data.volume);
+        t.setNetwork(data.nic);
+        t.connection(t.obj.cenObj, t.obj.vmObj);
+        t.connection(t.obj.botObj, t.obj.vmObj);
+        for(var i = 0; i < t.volumeObj.length; i++){
+            t.parallelDownConnection(t.obj.botObj,t.volumeObj[i]);
+        }
+        for(var i = 0; i < t.networkObj.length; i++){
+            t.parallelUpConnection(t.obj.cenObj,t.networkObj[i]);
+        }
+    }
+
+    function cheatObj(x,y,w,h){
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+    }
+
+    function Topology(ele,width,height) {
         var width = width;
         var height = height;
-        if(!width){
+        if (!width) {
             width = 700;
         }
-        if(!height){
-            height = 500;
+        if (!height) {
+            height = 600;
         }
 
-        this.raphael = Raphael(ele,width,height);
+        this.raphael = Raphael(ele, width, height);
         this.width = width;
         this.height = height;
         this.padding = 20;
@@ -53,19 +114,16 @@
         this.objW = this.width / this.rate;
         this.objH = this.height / (this.rate + 2);
         this.src = {
-            pubSrc : "https://console.ustack.com/static/modules/instance/i/icon-public-network.png",
-            vmSrc : "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png"
+            pubSrc: "https://console.ustack.com/static/modules/instance/i/icon-public-network.png",
+            vmSrc: "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_opensuse.png",
+            defaultSrc: "https://console.ustack.com/static/modules/instance/i/icon-network.png",
+            volumeSrc: "https://console.ustack.com/static/modules/instance/i/images/single-icon/image_windows.png"
         };
-        this.color = ["#59cbdb","#d5dee2"];
-        this.obj = {}
+        this.color = ["#59cbdb", "#d5dee2", "#7f7f7f"];
+        this.obj = {};
+        this.volumeObj = [];
+        this.networkObj = []
 
-    }
-
-    function cheatObj(x,y,w,h){
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
     }
 
     Topology.prototype.setTop = function(src){
@@ -80,6 +138,25 @@
         this.raphael.rect(0,this.topPadding,this.width,5,2).attr({fill : this.color[0],stroke : this.color[0]});
         var obj = new cheatObj(0,this.topPadding,this.width,5);
         this.obj.topObj = obj;
+    }
+
+    Topology.prototype.setVmRect = function(data,src){
+        var x = this.width / 2 - this.objW / 2;
+        var y = this.height / 3 * 2 - this.objH / 2 ;
+        var img = src ? src : this.src.vmSrc;
+        var img_w = 30,img_h = 30;
+        var img_x = (2 * x + this.objW) / 2 - img_w / 2;
+        var img_y = y + this.padding / 4;
+        var text_x = this.width / 2;
+        var text_y = y + this.objH - this.padding / 2;
+
+        var name = data ? data.name : "vm";
+        this.raphael.rect(x,y,this.objW,this.objH,2).attr({stroke : this.color[1],fill:"white",class : 'vmClass'});
+//        title="VLAN1" data-container="body" data-toggle="popover" data-placement="left" data-content="VLAN1 详细信息"
+        this.raphael.image(img,img_x,img_y,img_w,img_h);
+        this.raphael.text(text_x,text_y,name).attr({ fill : "#000", "font-size" : 13 });
+        var obj = new cheatObj(x,y,this.objW,this.objH);
+        this.obj.vmObj = obj;
     }
 
     Topology.prototype.setBottomRect = function(){
@@ -101,22 +178,70 @@
         this.obj.cenObj = obj;
     }
 
-    Topology.prototype.setVmRect = function(src,name){
-        var x = this.width / 2 - this.objW / 2;
-        var y = this.height / 3 * 2 - this.objH / 2 ;
-        var img = src ? src : this.src.vmSrc;
-        var img_w = 30,img_h = 30;
-        var img_x = (2 * x + this.objW) / 2 - img_w / 2;
-        var img_y = y + this.padding / 4;
-        var text_x = this.width / 2;
-        var text_y = y + this.objH - this.padding / 2;
-        var name = name ? name : "vm";
-        this.raphael.rect(x,y,this.objW,this.objH,2).attr({stroke : this.color[1],class : "vmClass"});
-        this.raphael.image(img,img_x,img_y,img_w,img_h);
-        this.raphael.text(text_x,text_y,name).attr({ fill : "#000", "font-size" : 13 });
-        var obj = new cheatObj(x,y,this.objW,this.objH);
-        this.obj.vmObj = obj;
+    Topology.prototype.setVolume = function(data){
+        var i = data.length + 1;
+        var rate = i * 2;
+        var x_index = [];
+        var y = this.height - this.objH -this.padding;
+        var length = this.obj.botObj.w / rate;
+        for(var m = 1; m <= rate; m++){
+            if(m % 2 != 0){
+                var x = this.obj.botObj.x + length * m;
+                x_index.push(x);
+            }
+        }
+
+        for(var m = 0;m <= data.length; m++){
+            var x = x_index[m] - this.objW / 2;
+            if(m != data.length){
+                this.setVolumeImg(x,y,data[m]);
+            }else{
+                this.setVolumeImg(x,y);
+            }
+        }
     }
+
+    Topology.prototype.setNetwork = function(data){
+        var rate = data.length * 2;
+        var x_index = [];
+        var y = this.obj.cenObj.y - 2 * this.objH -this.padding;
+        var length = this.obj.cenObj.w / rate;
+        for(var m = 1; m <= rate; m++){
+            if(m % 2 != 0){
+                var x = this.obj.cenObj.x + length * m;
+                x_index.push(x);
+            }
+        }
+
+        for(var m = 0;m < data.length; m++){
+            var x = x_index[m] - this.objW / 2;
+            this.setNetworkImg(x,y,data[m]);
+        }
+    }
+
+    Topology.prototype.setVolumeImg = function(x,y,data,src){
+        var img_src = src ? src : this.src.volumeSrc;
+        this.raphael.image(img_src,x,y,this.objW,this.objH);
+        if(data){
+            this.raphael.text(x + this.objW / 2,y + this.padding / 2 + this.objH,data.name);
+        }
+        var obj = new cheatObj(x,y,this.objW,this.objH);
+        this.volumeObj.push(obj);
+    }
+
+    Topology.prototype.setNetworkImg = function(x,y,data,src){
+        var img_src = src ? src : this.src.defaultSrc;
+        this.raphael.image(img_src,x,y,this.objW,this.objH);
+        if(data){
+            this.raphael.text(x + this.objW + this.padding,y + this.objH,data.name);
+        }
+        var obj = new cheatObj(x,y,this.objW,this.objH);
+        this.networkObj.push(obj);
+        if(data.default){
+            this.parallelDownConnection(obj,this.obj.topObj);
+        }
+    }
+
 
     Topology.prototype.connection = function(obj1,obj2){
         var x1 = obj1.x,x2 = obj2.x,y1 = obj1.y,y2 = obj2.y;
@@ -134,7 +259,45 @@
         }
 
         var path = [ "M", x1, y1, "L", x2, y2 ].join(",");
-        this.raphael.path(path).attr({fill: "none", stroke: "gray","stroke-width" : 1});
+        this.raphael.path(path).attr({fill: "none", stroke: this.color[2],"stroke-width" : 1});
+    }
+
+    Topology.prototype.parallelDownConnection = function(obj1,obj2){
+        var x1 = obj1.x,x2 = obj2.x,y1 = obj1.y,y2 = obj2.y;
+
+        if(y1 < y2){
+            x1 = obj2.x + obj2.w / 2;
+            y1 = obj1.y + obj1.h;
+            x2 = obj2.x + obj2.w / 2;
+            y2 = obj2.y;
+        }else{
+            x1 = obj1.x + obj1.w / 2;
+            y1 = obj1.y;
+            x2 = obj1.x + obj1.w / 2;
+            y2 = obj2.y + obj2.h;
+        }
+
+        var path = [ "M", x1, y1, "L", x2, y2 ].join(",");
+        this.raphael.path(path).attr({fill: "none", stroke: this.color[2],"stroke-width" : 1});
+    }
+
+    Topology.prototype.parallelUpConnection = function(obj1,obj2){
+        var x1 = obj1.x,x2 = obj2.x,y1 = obj1.y,y2 = obj2.y;
+
+        if(y1 < y2){
+            x1 = obj1.x + obj1.w / 2;
+            y1 = obj2.y ;
+            x2 = obj1.x + obj1.w / 2;
+            y2 = obj1.y+ obj1.h;
+        }else{
+            x1 =  obj2.x + obj2.w / 2;
+            y1 = obj1.y;
+            x2 = obj2.x + obj2.w / 2;
+            y2 = obj2.y + obj2.h;
+        }
+
+        var path = [ "M", x1, y1, "L", x2, y2 ].join(",");
+        this.raphael.path(path).attr({fill: "none", stroke: this.color[2],"stroke-width" : 1});
     }
 
 </script>
