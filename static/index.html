@@ -120,8 +120,7 @@
 
     Topology.prototype.connection = function(obj1,obj2){
         var x1 = obj1.x,x2 = obj2.x,y1 = obj1.y,y2 = obj2.y;
-//        console.info(y1);
-//        console.info(y2);
+
         if(y1 < y2){
             x1 = obj1.x + obj1.w / 2;
             y1 = obj1.y + obj1.h;
@@ -133,10 +132,7 @@
             x2 = obj2.x + obj2.w / 2;
             y2 = obj2.y + obj2.h;
         }
-        console.info(x1);
-        console.info(x2);
-        console.info(y1);
-        console.info(y2);
+
         var path = [ "M", x1, y1, "L", x2, y2 ].join(",");
         this.raphael.path(path).attr({fill: "none", stroke: "gray","stroke-width" : 1});
     }
