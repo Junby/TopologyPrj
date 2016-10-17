@@ -19,19 +19,19 @@
     }
 </style>
 <body>
-<div id="frame"></div>
+<div id="frames"></div>
 </body>
 <script>
 
     function createVmTopology(ele,data,width,height){
-        var t = new Topology(ele);
+        var t = new Topology(ele,width,height);
         t.setTop();
         t.setTopRect();
         t.setVmRect(data);
         t.setBottomRect();
         t.setCenterRect();
-        t.setVolume(data.volume);
-        t.setNetwork(data.nic);
+        t.setVolume(data);
+        t.setNetwork(data);
         t.connection(t.obj.cenObj, t.obj.vmObj);
         t.connection(t.obj.botObj, t.obj.vmObj);
         for(var i = 0; i < t.volumeObj.length; i++){
@@ -47,6 +47,55 @@
         this.y = y;
         this.w = w;
         this.h = h;
+    }
+
+    function createVolume(instanceId) {
+        alert(instanceId);
+    }
+    function createVMPopover(data){
+            var title = '<div style="text-align:center; color:red; text-decoration:underline; font-size:14px;">'+data.name+'</div>'; //this is the top title bar of the popover. add some basic css
+            var status = initStatus(data.status);
+            var template = '<div><label>模板：</label><a href="xxx/'+data.templateId+'">'+data.templateName+'</a></div>';
+            var content = '<div id="content"><div><label>名字：</label><span>'+data.name+'</span></div>'+status + template +'</div>';
+            var thisA = $('.vmClass');
+            $(".vmClass").popover({
+                container: 'body',
+                trigger:'manual',
+                placement : 'right', //placement of the popover. also can use top, bottom, left or right
+                title : title,
+                html: 'true', //needed to show html of course
+//                content : '<div id="popOverBox"><img src="http://www.hd-report.com/wp-content/uploads/2008/08/mr-evil.jpg" width="251" height="201" /></div>', //this is the content of the html box. add the image here or anything you want really.
+                content : content,
+                animation: false
+            }).on("mouseenter", function () {
+                var _this = this;
+                $(this).popover("show");
+                $(this).siblings(".popover").on("mouseleave", function () {
+                    $(_this).popover('hide');
+                });
+                thisA.attr("stroke","#59cbdb");
+            }).on("mouseleave", function () {
+//            var _this = this;
+//            setTimeout(function () {
+//                if (!$(".popover:hover").length) {
+//                    $(_this).popover("hide")
+//                }
+//            }, 100);
+                thisA.attr("stroke","#d5dee2");
+        });
+
+        $("body").on("mousewheel click",function(){
+            if($(".vmClass").length){
+                $(".vmClass").popover("hide");
+            }
+        });
+    }
+
+    function initStatus(status){
+        if(status){
+
+        }
+        return '<div><label>状态：</label><span class="">运行中</span></div>';
     }
 
     function Topology(ele,width,height) {
@@ -105,12 +154,12 @@
         var text_y = y + this.objH - this.padding / 2;
 
         var name = data ? data.name : "vm";
-        this.raphael.rect(x,y,this.objW,this.objH,2).attr({stroke : this.color[1],fill:"red",class : 'vmClass'});
-//        title="VLAN1" data-container="body" data-toggle="popover" data-placement="left" data-content="VLAN1 详细信息"
+        this.raphael.rect(x,y,this.objW,this.objH,2).attr({stroke : this.color[1],fill:"white",class : 'vmClass'});
         this.raphael.image(img,img_x,img_y,img_w,img_h);
         this.raphael.text(text_x,text_y,name).attr({ fill : "#000", "font-size" : 13 });
         var obj = new cheatObj(x,y,this.objW,this.objH);
         this.obj.vmObj = obj;
+        createVMPopover(data);
     }
 
     Topology.prototype.setBottomRect = function(){
@@ -132,7 +181,8 @@
         this.obj.cenObj = obj;
     }
 
-    Topology.prototype.setVolume = function(data){
+    Topology.prototype.setVolume = function(detail){
+        var data = detail.volume;
         var i = data.length + 1;
         var rate = i * 2;
         var x_index = [];
@@ -150,15 +200,20 @@
             if(m != data.length){
                 this.setVolumeImg(x,y,data[m]);
             }else{
-                this.setVolumeImg(x,y);
+                var i = this.setVolumeImg(x,y);
+                i.click(function(){
+                    //click action
+                    createVolume(detail.id);
+                });
             }
         }
     }
 
-    Topology.prototype.setNetwork = function(data){
+    Topology.prototype.setNetwork = function(detail){
+        var data = detail.nic;
         var rate = data.length * 2;
         var x_index = [];
-        var y = this.obj.cenObj.y - 2 * this.objH -this.padding;
+        var y = this.obj.cenObj.y - 2 * this.objH ;
         var length = this.obj.cenObj.w / rate;
         for(var m = 1; m <= rate; m++){
             if(m % 2 != 0){
@@ -169,31 +224,51 @@
 
         for(var m = 0;m < data.length; m++){
             var x = x_index[m] - this.objW / 2;
-            this.setNetworkImg(x,y,data[m]);
+            this.setNetworkImg(detail.id,x,y,data[m]);
         }
     }
 
     Topology.prototype.setVolumeImg = function(x,y,data,src){
         var img_src = src ? src : this.src.volumeSrc;
-        this.raphael.image(img_src,x,y,this.objW,this.objH);
+        var i = this.raphael.image(img_src,x,y,this.objW,this.objH);
         if(data){
             this.raphael.text(x + this.objW / 2,y + this.padding / 2 + this.objH,data.name);
         }
         var obj = new cheatObj(x,y,this.objW,this.objH);
         this.volumeObj.push(obj);
+        return i;
     }
 
-    Topology.prototype.setNetworkImg = function(x,y,data,src){
+    Topology.prototype.setNetworkImg = function(instanceId,x,y,data,src){
         var img_src = src ? src : this.src.defaultSrc;
-        this.raphael.image(img_src,x,y,this.objW,this.objH);
+        var i = this.raphael.image(img_src,x,y,this.objW,this.objH);
         if(data){
             this.raphael.text(x + this.objW + this.padding,y + this.objH,data.name);
         }
         var obj = new cheatObj(x,y,this.objW,this.objH);
         this.networkObj.push(obj);
         if(data.default){
-            this.parallelDownConnection(obj,this.obj.topObj);
+            this.addPublicIp(instanceId,obj);
+//            i.click(function(){
+//                createVolume(instanceId);
+//            });
         }
+    }
+
+    Topology.prototype.addPublicIp = function(instanceId,obj){
+        var x = obj.x, y = (obj.y + this.obj.topObj.y) / 2, w = obj.w, h = 20;
+        var r = this.raphael.rect(x,y,w,h,2).attr({fill : 'white',stroke : this.color[1],class : "dash"});
+        var i = this.raphael.text(x + w/2,y + h/2,'绑定公网IP');
+        $(".dash").attr("stroke-dasharray","10");
+        var pubObj = new cheatObj(x,y,w,h);
+        this.connection(obj,pubObj);
+        this.parallelDownConnection(pubObj,this.obj.topObj);
+        r.click(function(){
+            createVolume(instanceId);
+        });
+        i.click(function(){
+            createVolume(instanceId);
+        });
     }
 
 
@@ -265,6 +340,8 @@
                 id : "id",
                 status : "running",
                 publicIp : "ip",
+                templateName : "templateName",
+                templateId : "tId",
                 nic : [
                     {
                         id : "id1",
@@ -292,38 +369,8 @@
             }
         }
 
-        createVmTopology("frame",data.data,700,600);
+        createVmTopology("frames",data.data,600,500);
 
-
-        $(".vmClass").popover({
-            container: 'body',
-            trigger:'manual',
-            placement : 'right', //placement of the popover. also can use top, bottom, left or right
-            title : '<div style="text-align:center; color:red; text-decoration:underline; font-size:14px;"> Muah ha ha</div>', //this is the top title bar of the popover. add some basic css
-            html: 'true', //needed to show html of course
-            content : '<div id="popOverBox"><img src="http://www.hd-report.com/wp-content/uploads/2008/08/mr-evil.jpg" width="251" height="201" /></div>', //this is the content of the html box. add the image here or anything you want really.
-            animation: false
-        }).on("mouseenter", function () {
-            var _this = this;
-            $(this).popover("show");
-            $(this).siblings(".popover").on("mouseleave", function () {
-                $(_this).popover('hide');
-            });
-        });
-//                .on("mouseleave", function () {
-//            var _this = this;
-//            setTimeout(function () {
-//                if (!$(".popover:hover").length) {
-//                    $(_this).popover("hide")
-//                }
-//            }, 100);
-//        });
-
-        $("body").click(function(){
-           if($(".vmClass").length){
-               $(".vmClass").popover("hide");
-           }
-        });
     });
 </script>
 </html>
