@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <title>动态生成拓扑图</title>
 </head>
-<!--<script src="/TopologyPrj/js/bootstrap.min.js"></script>-->
-<!--<link href="/TopologyPrj/css/bootstrap.css" rel="stylesheet">-->
-<script src="/TopologyPrj/js/jquery-1.7.2.js"></script>
-<script src="/TopologyPrj/js/d3.js"></script>
+<script src="/TopologyPrj/js/jquery-3.1.0.min.js"></script>
 <script src="/TopologyPrj/js/raphael.min.js"></script>
+<script src="/TopologyPrj/js/bootstrap.min.js"></script>
+<link href="/TopologyPrj/css/bootstrap.css" rel="stylesheet">
 <style type="text/css">
     #frame{
         width:700px;
@@ -22,51 +21,6 @@
 <body>
 <div id="frame"></div>
 </body>
-
-<script>
-    $(function(){
-        var data = {
-            success : true,
-            message : "",
-            data : {
-                name : "vm-test",
-                id : "id",
-                status : "running",
-                publicIp : "ip",
-                nic : [
-                    {
-                        id : "id1",
-                        name : "net1",
-                        ip : "ip1",
-                        default : true,
-                        type : "isolate"
-                    },
-                    {
-                        id : "id2",
-                        name : "net2",
-                        ip : "ip2",
-                        default : false,
-                        type : "isolate"
-                    }
-                ],
-                volume : [
-                    {
-                        id : "id",
-                        name : "root",
-                        size : 20,
-                        type : "root"
-                    }
-                ]
-            }
-        }
-
-       createVmTopology("frame",data.data,700,600);
-        $(".vmClass").mouseover(function(){
-            console.log(1);
-        });
-
-    });
-</script>
 <script>
 
     function createVmTopology(ele,data,width,height){
@@ -151,7 +105,7 @@
         var text_y = y + this.objH - this.padding / 2;
 
         var name = data ? data.name : "vm";
-        this.raphael.rect(x,y,this.objW,this.objH,2).attr({stroke : this.color[1],fill:"white",class : 'vmClass'});
+        this.raphael.rect(x,y,this.objW,this.objH,2).attr({stroke : this.color[1],fill:"red",class : 'vmClass'});
 //        title="VLAN1" data-container="body" data-toggle="popover" data-placement="left" data-content="VLAN1 详细信息"
         this.raphael.image(img,img_x,img_y,img_w,img_h);
         this.raphael.text(text_x,text_y,name).attr({ fill : "#000", "font-size" : 13 });
@@ -300,5 +254,76 @@
         this.raphael.path(path).attr({fill: "none", stroke: this.color[2],"stroke-width" : 1});
     }
 
+</script>
+<script>
+    $(function(){
+        var data = {
+            success : true,
+            message : "",
+            data : {
+                name : "vm-test",
+                id : "id",
+                status : "running",
+                publicIp : "ip",
+                nic : [
+                    {
+                        id : "id1",
+                        name : "net1",
+                        ip : "ip1",
+                        default : true,
+                        type : "isolate"
+                    },
+                    {
+                        id : "id2",
+                        name : "net2",
+                        ip : "ip2",
+                        default : false,
+                        type : "isolate"
+                    }
+                ],
+                volume : [
+                    {
+                        id : "id",
+                        name : "root",
+                        size : 20,
+                        type : "root"
+                    }
+                ]
+            }
+        }
+
+        createVmTopology("frame",data.data,700,600);
+
+
+        $(".vmClass").popover({
+            container: 'body',
+            trigger:'manual',
+            placement : 'right', //placement of the popover. also can use top, bottom, left or right
+            title : '<div style="text-align:center; color:red; text-decoration:underline; font-size:14px;"> Muah ha ha</div>', //this is the top title bar of the popover. add some basic css
+            html: 'true', //needed to show html of course
+            content : '<div id="popOverBox"><img src="http://www.hd-report.com/wp-content/uploads/2008/08/mr-evil.jpg" width="251" height="201" /></div>', //this is the content of the html box. add the image here or anything you want really.
+            animation: false
+        }).on("mouseenter", function () {
+            var _this = this;
+            $(this).popover("show");
+            $(this).siblings(".popover").on("mouseleave", function () {
+                $(_this).popover('hide');
+            });
+        });
+//                .on("mouseleave", function () {
+//            var _this = this;
+//            setTimeout(function () {
+//                if (!$(".popover:hover").length) {
+//                    $(_this).popover("hide")
+//                }
+//            }, 100);
+//        });
+
+        $("body").click(function(){
+           if($(".vmClass").length){
+               $(".vmClass").popover("hide");
+           }
+        });
+    });
 </script>
 </html>
